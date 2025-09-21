@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Roboto_Serif } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import Provider from "@/components/providers/Provider";
 
-const roboto = Roboto_Serif({
+const roboto = Roboto({
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Auth Template",
-  description: "",
+  title: "Parch",
+  description: "Scribe your note, never lose them",
 };
 
 export default function RootLayout({
