@@ -120,3 +120,46 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .tiptap {
+    @apply p-4 w-full outline-0;
+  }
+  .tiptap > p {
+    @apply mb-3;
+  }
+  .tiptap:first-child {
+    @apply mt-0;
+  }
+  .tiptap ul,
+  .tiptap ol {
+    @apply px-6 py-1;
+  }
+  .tiptap ul {
+    @apply list-disc;
+  }
+  .tiptap ol {
+    @apply list-decimal;
+  }
+  .tiptap ul li p {
+    @apply mt-0.5 mb-0.5;
+  }
+  .tiptap h1,
+  .tiptap h2,
+  .tiptap h3 {
+    @apply leading-9 mt-2.5 text-pretty;
+  }
+  .tiptap h1,
+  .tiptap h2 {
+    @apply mt-3.5 mb-1.5 font-bold;
+  }
+  .tiptap h1 {
+    @apply text-3xl;
+  }
+  .tiptap h2 {
+    @apply text-2xl;
+  }
+  .tiptap h3 {
+    @apply text-xl font-semibold;
+  }
+}

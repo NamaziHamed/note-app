@@ -3,7 +3,7 @@ import React from "react";
 
 const page = () => {
   return (
-    <div>
+    <div className="min-w-[100vw] min-h-[100vh] bg-zinc-900">
       <Tiptap />
     </div>
   );

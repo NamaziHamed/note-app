@@ -15,8 +15,9 @@ const Tiptap = ({ initialValue }: { initialValue?: JSON }) => {
   if (!editor) return null;
 
   return (
-    <div>
-      <Toolbar editor={editor} /> <Editor editor={editor} />
+    <div className="max-w-3xl mx-auto">
+      <Toolbar editor={editor} />
+      <Editor editor={editor} />
     </div>
   );
 };
