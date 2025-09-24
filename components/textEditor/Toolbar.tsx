@@ -1,5 +1,5 @@
 import React from "react";
-import {  Editor, useEditorState,  } from "@tiptap/react";
+import { Editor, useEditorState } from "@tiptap/react";
 import {
   BoldIcon,
   Heading1Icon,
@@ -8,8 +8,10 @@ import {
   ItalicIcon,
   ListIcon,
   ListOrderedIcon,
+  Redo2Icon,
   StrikethroughIcon,
   UnderlineIcon,
+  Undo2Icon,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { Button } from "../ui/button";
@@ -89,21 +91,37 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
       command: () => editor.chain().focus().toggleBulletList().run(),
       isActive: editorState.isBulletList,
     },
+    {
+      title: "Undo",
+      Icon: Undo2Icon,
+      command: () => editor.chain().focus().undo().run(),
+      isActive: editorState.canUndo,
+    },
+    {
+      title: "Redo",
+      Icon: Redo2Icon,
+      command: () => editor.chain().focus().redo().run(),
+      isActive: editorState.canRedo,
+    },
   ];
 
   return (
-    <div className="w-full bg-muted border-b flex gap-2 items-center justify-center">
+    <div
+      className="w-full bg-muted border-b flex gap-2 items-center justify-center
+    rounded-t-xl"
+    >
       {tools.map(({ title, Icon, command, isActive }) => (
         <Tooltip key={title}>
           <TooltipTrigger asChild>
             <Button
               variant={"ghost"}
               onClick={command}
+              disabled={(title === "Redo" || title === "Undo") && !isActive}
               className={`${
-                isActive
+                !(title === "Redo" || title === "Undo") && isActive
                   ? "border border-primary text-primary"
                   : "border-0 text-foreground"
-              } transition-all duration-300`}
+              } transition-all duration-300 cursor-pointer disabled:bg-gray-700`}
             >
               <Icon className="w-4 h-4" />
             </Button>
