@@ -3,6 +3,7 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import Sidebar from "@/components/dashboard/Sidebar";
+import MasonaryLayout from "@/components/dashboard/MasonaryLayout";
 
 const page = () => {
   const { data: session, status } = useSession();
@@ -16,6 +17,7 @@ const page = () => {
   return (
     <main>
       <Sidebar session={session} />
+      <MasonaryLayout />
     </main>
   );
 };
