@@ -9,12 +9,12 @@ const Tiptap = ({
   initialValue,
   onChange,
 }: {
-  initialValue?: JSON;
+  initialValue: JSONContent | null;
   onChange: (json: JSONContent) => void;
 }) => {
   const editor = useEditor({
     extensions: [StarterKit],
-    content: "",
+    content: initialValue,
     editorProps: {
       attributes: { class: "bg-muted rounded-b-xl min-h-[400px]" },
     },

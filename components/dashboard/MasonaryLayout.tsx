@@ -1,26 +1,10 @@
 "use client";
-import { Session } from "next-auth";
 import React, { useEffect, useState } from "react";
 import Masonry from "react-masonry-css";
 import axios from "axios";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Span } from "next/dist/trace";
-import { Button } from "../ui/button";
-
-interface Notedata {
-  id: string;
-  title: string | null;
-  plainText: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import Link from "next/link";
+import { Notedata } from "@/utils/types";
 
 const MasonaryLayout = () => {
   const [data, setData] = useState<Notedata[]>([]);
@@ -41,32 +25,35 @@ const MasonaryLayout = () => {
   return (
     <Masonry
       breakpointCols={3}
-      className="ps-20 flex gap-4 "
+      className="ps-20 pt-10 pe-3 flex gap-4 "
       columnClassName=""
     >
       {data.map((note) => (
         <Card key={note.id} className="mb-4">
-          <CardHeader>
-            <CardTitle>
-              {note.title ? (
-                note.title
-              ) : (
-                <span className="text-sm text-muted-foreground">
-                  {note.createdAt.toLocaleString()}
-                </span>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {note.plainText?.split("\n").map((line, index) => (
-              <p className="truncate" key={index}>
-                {line}
-              </p>
-            ))}
-          </CardContent>
-          <CardFooter>
-            <Button variant={"outline"}>View...</Button>
-          </CardFooter>
+          <Link href={"/note/" + note.id}>
+            <CardHeader>
+              <CardTitle>
+                {note.title ? (
+                  note.title
+                ) : (
+                  <span className="text-sm text-muted-foreground">
+                    {note.createdAt.toLocaleString()}
+                  </span>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {!note.plainText && <p className="text-xs">Empty!</p>}
+              {note.plainText?.split("\n").map((line, index) => (
+                <p
+                  key={index}
+                  className="text-wrap break-words text-xs text-card-foreground"
+                >
+                  {line}
+                </p>
+              ))}
+            </CardContent>
+          </Link>
         </Card>
       ))}
     </Masonry>

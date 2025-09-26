@@ -1,6 +1,13 @@
-import { z } from "zod";
+import { inherits } from "util";
 
-export const noteSchema = z.object({
-  title: z.string().optional(),
-  jsonText: z.any(),
-});
+export interface Notedata {
+  id: string;
+  title: string | null;
+  plainText: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface SpecificNoteData extends Notedata {
+  jsonText: string | null;
+}
