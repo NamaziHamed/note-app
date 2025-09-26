@@ -2,15 +2,25 @@
 import React from "react";
 import Toolbar from "./Toolbar";
 import Editor from "./Editor";
-import { useEditor } from "@tiptap/react";
+import { JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
-const Tiptap = ({ initialValue }: { initialValue?: JSON }) => {
+const Tiptap = ({
+  initialValue,
+  onChange,
+}: {
+  initialValue?: JSON;
+  onChange: (json: JSONContent) => void;
+}) => {
   const editor = useEditor({
     extensions: [StarterKit],
-    content: { initialValue },
+    content: "",
     editorProps: {
       attributes: { class: "bg-muted rounded-b-xl min-h-[400px]" },
+    },
+    onUpdate: ({ editor }) => {
+      const json = editor.getJSON();
+      onChange(json);
     },
     immediatelyRender: false,
   });
@@ -18,7 +28,7 @@ const Tiptap = ({ initialValue }: { initialValue?: JSON }) => {
   if (!editor) return null;
 
   return (
-    <div className="max-w-3xl mx-auto rounded-md shadow-sm shadow-gray-400">
+    <div className="">
       <Toolbar editor={editor} />
       <Editor editor={editor} />
     </div>

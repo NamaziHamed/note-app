@@ -107,13 +107,14 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
 
   return (
     <div
-      className="w-full bg-muted border-b flex gap-2 items-center justify-center
+      className="w-full bg-muted border-b flex gap-0 sm:space-x-0 sm:gap-2 items-center justify-center
     rounded-t-xl"
     >
       {tools.map(({ title, Icon, command, isActive }) => (
         <Tooltip key={title}>
           <TooltipTrigger asChild>
             <Button
+              size={"sm"}
               variant={"ghost"}
               onClick={command}
               disabled={(title === "Redo" || title === "Undo") && !isActive}
