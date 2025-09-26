@@ -107,8 +107,8 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
 
   return (
     <div
-      className="w-full bg-muted border-b flex gap-0 sm:space-x-0 sm:gap-2 items-center justify-center
-    rounded-t-xl"
+      className="w-full bg-muted border-b border-t py-1 flex gap-0 sm:space-x-0 sm:gap-2 items-center justify-between sm:justify-start 
+    "
     >
       {tools.map(({ title, Icon, command, isActive }) => (
         <Tooltip key={title}>

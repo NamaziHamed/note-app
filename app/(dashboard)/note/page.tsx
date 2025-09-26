@@ -48,13 +48,15 @@ const page = () => {
   }, [title, editorContent, id]);
 
   return (
-    <div className="min-w-[100vw] min-h-[100vh] bg-zinc-900 py-20 ">
-      <Button className="fixed top-5 left-5" variant={"outline"} asChild>
-        <Link href={"/dashboard"}>
-          <ArrowBigLeft />
-          All notes
-        </Link>
-      </Button>
+    <div className="min-w-[100vw] min-h-[100vh] bg-zinc-900 pt-30 ">
+      <div className="w-full fixed top-0 bg-zinc-950 px-4 py-5 border-b border-zinc-300">
+        <Button className="" variant={"secondary"} asChild>
+          <Link href={"/dashboard"}>
+            <ArrowBigLeft />
+            All notes
+          </Link>
+        </Button>
+      </div>
 
       <div className="max-w-3xl mx-auto rounded-md shadow-sm shadow-gray-400 pt-4 bg-muted">
         <div className="max-w-3xl mx-auto mb-10 ">
