@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Tiptap from "@/components/textEditor/Tiptap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,9 +9,10 @@ import { JSONContent } from "@tiptap/react";
 import axios from "axios";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 
 const page = () => {
+  const router = useRouter();
   const paramsData = useParams();
   const [title, setTitle] = useState("");
   const [editorContent, setEditorContent] = useState<JSONContent | null>(null);
@@ -23,6 +24,7 @@ const page = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (id === "new") {
+        setEditorContent({});
         setIsLoading(false);
         return;
       }
@@ -58,8 +60,12 @@ const page = () => {
           { title, jsonText: editorContent },
           { headers: { "Content-Type": "application/json" } }
         );
-        if (res.status === 201) setId(res.data.id);
-        setIsChanged(false);
+        if (res.status === 201) {
+          setId(res.data.id);
+          setIsChanged(false);
+          window.history.replaceState(null, "", `/note/${res.data.id}`);
+          return;
+        }
       }
       if (isChanged) {
         try {
@@ -111,6 +117,7 @@ const page = () => {
             id="title"
             name="title"
             placeholder="Document"
+            className="text-3xl md:text-4xl lg:text-5xl font-bold py-7"
             value={title}
             onChange={(e) => {
               setTitle(e.target.value);
@@ -119,7 +126,7 @@ const page = () => {
           />
         </div>
         <Tiptap
-        initialValue={editorContent}
+          initialValue={editorContent}
           onChange={(newContent: JSONContent) => {
             setEditorContent(newContent);
             setIsChanged(true);

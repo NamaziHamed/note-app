@@ -38,7 +38,6 @@ export async function GET(req: Request, context: { params: { id: string } }) {
     return NextResponse.json({ message: "Not Authorized" }, { status: 401 });
 
   try {
-    console.log(id);
     const noteData = await prisma.note.findUnique({
       where: { id },
     });
@@ -47,8 +46,35 @@ export async function GET(req: Request, context: { params: { id: string } }) {
         { message: "Something went wrong" },
         { status: 500 }
       );
-    console.log(noteData);
     return NextResponse.json(noteData, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal server Error: " + error },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  req: Request,
+  context: { params: { id: string } }
+) {
+  const session = await auth();
+  const userId = session?.user?.id;
+  const { id } = await context.params;
+  if (!userId)
+    return NextResponse.json({ message: "Not Authorized" }, { status: 401 });
+
+  try {
+    const res = await prisma.note.delete({
+      where: { id, userId },
+    });
+    if (!res)
+      return NextResponse.json(
+        { message: "Something went wrong" },
+        { status: 500 }
+      );
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     return NextResponse.json(
       { message: "Internal server Error: " + error },

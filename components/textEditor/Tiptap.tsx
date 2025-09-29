@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Toolbar from "./Toolbar";
 import Editor from "./Editor";
 import { JSONContent, useEditor } from "@tiptap/react";
@@ -12,11 +12,12 @@ const Tiptap = ({
   initialValue: JSONContent | null;
   onChange: (json: JSONContent) => void;
 }) => {
+  const [text] = useState(initialValue || null)
   const editor = useEditor({
     extensions: [StarterKit],
-    content: initialValue,
+    content: text,
     editorProps: {
-      attributes: { class: "bg-muted rounded-b-xl min-h-[400px]" },
+      attributes: { class: "bg-card rounded-b-xl min-h-[400px]" },
     },
     onUpdate: ({ editor }) => {
       const json = editor.getJSON();

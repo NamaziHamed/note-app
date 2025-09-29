@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
 import Sidebar from "@/components/dashboard/Sidebar";
 import MasonaryLayout from "@/components/dashboard/MasonaryLayout";
+import AddNewNote from "@/components/dashboard/AddNewNote";
 
 const page = () => {
   const { data: session, status } = useSession();
@@ -17,7 +18,13 @@ const page = () => {
   return (
     <main>
       <Sidebar session={session} />
-      <MasonaryLayout />
+      <div>
+        <h2 className="ps-24 pt-10 font-semibold text-2xl text-primary">
+          All notes
+        </h2>
+        <MasonaryLayout />
+      </div>
+      <AddNewNote />
     </main>
   );
 };
