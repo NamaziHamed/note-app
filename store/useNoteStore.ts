@@ -1,10 +1,9 @@
 import { create } from "zustand";
 import { JSONContent } from "@tiptap/react";
 
-// Define a constant for the initial empty state for reuse.
 const emptyDoc: JSONContent = { type: "doc", content: [] };
 const initialState = {
-  id: null as string | null, // Use null to represent "no note loaded"
+  id: "new",
   title: "",
   jsonText: emptyDoc,
 };
@@ -24,6 +23,7 @@ export const useNoteStore = create<INoteStore>()((set) => ({
 
   setTitle: (title) => set({ title }),
   setJsonText: (jsonText) => set({ jsonText }),
+  
   setNote: (note) => set({ ...note }),
-  clearNote: () => set({ ...initialState, id: "new" }), // Set id to "new" for a new note
+  clearNote: () => set({ ...initialState }),
 }));

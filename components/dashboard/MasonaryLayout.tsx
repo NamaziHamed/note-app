@@ -10,14 +10,14 @@ import {
   CardTitle,
 } from "../ui/card";
 import Link from "next/link";
-import { Notedata } from "@/utils/types";
+import { NoteData } from "@/utils/types";
 import { DateTime } from "luxon";
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 const MasonaryLayout = () => {
-  const [data, setData] = useState<Notedata[]>([]);
+  const [data, setData] = useState<NoteData[]>([]);
   const breakpointColumnsObj = {
     default: 4,
     1100: 3,

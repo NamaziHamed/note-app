@@ -1,6 +1,7 @@
 "use server";
-import { signIn } from "@/auth";
-import { loginProps, registerProps, registerSchema } from "./authValidations";
+import { signIn, signOut } from "@/auth";
+import { loginProps, registerSchema } from "./authValidations";
+import { redirect } from "next/navigation";
 
 export async function signInWithGoogle() {
   await signIn("google");
@@ -21,4 +22,9 @@ export async function register(data: loginProps) {
   }
 
   return res.json();
+}
+
+export async function logout() {
+  await signOut();
+  redirect("/login");
 }
