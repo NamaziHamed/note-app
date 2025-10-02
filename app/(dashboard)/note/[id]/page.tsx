@@ -9,132 +9,109 @@ import { JSONContent } from "@tiptap/react";
 import axios from "axios";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useNoteStore } from "@/store/useNoteStore";
+import { NoteData } from "@/utils/types";
 
-const page = () => {
-  const router = useRouter();
-  const paramsData = useParams();
-  const [title, setTitle] = useState("");
-  const [editorContent, setEditorContent] = useState<JSONContent | null>(null);
-  const [id, setId] = useState(paramsData.id);
-  const [isChanged, setIsChanged] = useState(false);
+const NotePage = () => {
+  const { id, title, jsonText, setNote, setTitle, setJsonText, clearNote } =
+    useNoteStore();
+
+  const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [hasChanged, setHasChanged] = useState(false);
 
-  // Loading initial data if( params.id != new)
+  // Loading initial note data or clearning it
   useEffect(() => {
-    const fetchData = async () => {
+    const id = params.id as string;
+    setIsLoading(true);
+
+    const loadNote = async () => {
       if (id === "new") {
-        setEditorContent({});
-        setIsLoading(false);
-        return;
+        clearNote();
+      } else {
+        try {
+          const res = await axios.get<NoteData>(`/api/note/${id}`);
+          if (res.status === 200) {
+            const note = res.data;
+            setNote({
+              id: id,
+              title: note.title || "",
+              jsonText: JSON.parse(note.jsonText || "{}"),
+            });
+          }
+        } catch (error) {
+          toast.error("Failed to load note.");
+        }
       }
+      setIsLoading(false);
+      setHasChanged(false);
+    };
+
+    loadNote();
+  }, [params.id]);
+
+  // Saving process controlled by hasChanged
+  useEffect(() => {
+    if (!hasChanged) return;
+
+    const saveNote = async () => {
+      const payload = { title, jsonText };
       try {
-        const res = await axios.get(`/api/note/${id}`);
-        console.log(res);
-        if (res.status === 200) {
-          const note = res.data;
-          setEditorContent(JSON.parse(note.jsonText ?? "{}"));
-          setTitle(note.title ?? "");
+        if (id === "new") {
+          const res = await axios.post("/api/note", payload);
+          setNote({ id: res.data.id, title, jsonText });
+          toast.success("Note saved!");
+        } else {
+          await axios.put(`/api/note/${id}`, payload);
         }
       } catch (error) {
-        console.error(error);
-      } finally {
-        console.log(id, title, editorContent);
-        setIsLoading(false);
+        toast.error("Error saving progress.");
       }
     };
 
-    fetchData();
-  }, [id]);
-
-  // Process for saving new note or updatin one by checking the state of id
-  useEffect(() => {
-    const saveNote = async () => {
-      if (id === "new" && !title && !editorContent) return;
-
-      const baseURL = process.env.NEXT_PUBLIC_BASE_URL + "/api/note";
-
-      if (id === "new") {
-        const res = await axios.post(
-          baseURL,
-          { title, jsonText: editorContent },
-          { headers: { "Content-Type": "application/json" } }
-        );
-        if (res.status === 201) {
-          setId(res.data.id);
-          setIsChanged(false);
-          window.history.replaceState(null, "", `/note/${res.data.id}`);
-          return;
-        }
-      }
-      if (isChanged) {
-        try {
-          const res = await axios.put(
-            baseURL + `/${id}`,
-            { title, jsonText: editorContent },
-            { headers: { "Content-Type": "application/json" } }
-          );
-        } catch (error) {
-          toast.error("Error saving progress! check your internet connection");
-        }
-      }
-    };
-
-    const timer = setTimeout(() => {
-      saveNote();
-      setIsChanged(false);
-    }, 3000);
-
+    const timer = setTimeout(saveNote, 3000);
     return () => clearTimeout(timer);
-  }, [title, editorContent, id]);
+  }, [title, jsonText, hasChanged]);
 
-  if (isLoading)
+  if (isLoading) {
     return (
-      <div className="min-h-screen min-w-screen flex items-center justify-center gap-2">
-        <Loader2Icon className="text-primary w-6 h-6 animate-spin" />
-        <p className="animate-pulse">Loading ...</p>
+      <div className="flex gap-2 items-center min-w-screen min-h-screen justify-center">
+        <Loader2Icon className="text-primary w-8 h-8 animate-spin" />
+        <span className="animate-pulse">Loading...</span>
       </div>
     );
+  }
+
   return (
-    <div className="min-w-[100vw] min-h-[100vh] bg-zinc-900 pt-30 ">
-      <div className="w-full fixed top-0 bg-zinc-950 px-4 py-5 border-b border-zinc-300">
-        <Button className="" variant={"secondary"} asChild>
-          <Link href={"/dashboard"}>
+    <div className="pt-24 relative">
+      <div className="h-24 w-full absolute top-0 left-0 py-6 px-3">
+        <Button variant={"outline"} asChild>
+          <Link href={"/dashboard"} className="flex gap-2 items-center">
             <ArrowBigLeft />
-            All notes
+            <span>Dashboard</span>
           </Link>
         </Button>
       </div>
-
-      <div className="max-w-3xl mx-auto rounded-md shadow-sm shadow-gray-400 pt-4 bg-muted">
-        <div className="max-w-3xl mx-auto mb-10 ">
-          <Label htmlFor="title" className="mb-3 ps-4">
-            Title:
-          </Label>
-
-          <Input
-            type="text"
-            id="title"
-            name="title"
-            placeholder="Document"
-            className="text-3xl md:text-4xl lg:text-5xl font-bold py-7"
-            value={title}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              setIsChanged(true);
-            }}
-          />
-        </div>
-        <Tiptap
-          initialValue={editorContent}
-          onChange={(newContent: JSONContent) => {
-            setEditorContent(newContent);
-            setIsChanged(true);
-          }}
-        />
-      </div>
+      <Input
+        className="py-8 text-2xl md:text-3xl lg:text-4xl font-bold"
+        placeholder="Untitled"
+        value={title}
+        onChange={(e) => {
+          setTitle(e.target.value);
+          setHasChanged(true);
+        }}
+      />
+      <Tiptap
+        key={id}
+        initialValue={jsonText}
+        onChange={(newContent: JSONContent) => {
+          setJsonText(newContent);
+          setHasChanged(true);
+        }}
+      />
     </div>
   );
 };
 
-export default page;
+export default NotePage;

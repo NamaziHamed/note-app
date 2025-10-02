@@ -165,4 +165,7 @@
   .tiptap p {
     @apply text-sm;
   }
+  .checkList {
+    @apply flex gap-2 items-center justify-start;
+  }
 }

@@ -1,6 +1,4 @@
-import { inherits } from "util";
-
-export interface Notedata {
+export interface IPlainNotedata {
   id: string;
   title: string | null;
   plainText: string | null;
@@ -8,6 +6,21 @@ export interface Notedata {
   updatedAt: Date;
 }
 
-export interface SpecificNoteData extends Notedata {
+export interface NoteData extends IPlainNotedata {
   jsonText: string | null;
 }
+
+export type EditorActiveState = {
+  isBold: boolean;
+  isUnderline: boolean;
+  isItalic: boolean;
+  isStrike: boolean;
+  isHeading1: boolean;
+  isHeading2: boolean;
+  isHeading3: boolean;
+  isBulletList: boolean;
+  isOrderedList: boolean;
+  isTaskList: boolean;
+  canUndo: boolean;
+  canRedo: boolean;
+};

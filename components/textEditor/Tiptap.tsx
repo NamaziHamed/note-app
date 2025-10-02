@@ -1,9 +1,11 @@
 "use client";
 import React, { useState } from "react";
 import Toolbar from "./Toolbar";
-import Editor from "./Editor";
+import { EditorContent } from "@tiptap/react";
 import { JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import BubbleMenu from "@tiptap/extension-bubble-menu";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 
 const Tiptap = ({
   initialValue,
@@ -12,12 +14,21 @@ const Tiptap = ({
   initialValue: JSONContent | null;
   onChange: (json: JSONContent) => void;
 }) => {
-  const [text] = useState(initialValue || null)
+  const [text] = useState(initialValue || null);
   const editor = useEditor({
-    extensions: [StarterKit],
+    extensions: [
+      StarterKit,
+      TaskList,
+      TaskItem.configure({
+        nested: true,
+        HTMLAttributes: {
+          class: "checkList",
+        },
+      }),
+    ],
     content: text,
     editorProps: {
-      attributes: { class: "bg-card rounded-b-xl min-h-[400px]" },
+      attributes: { class: "bg-card rounded-b-xl min-h-[75vh]" },
     },
     onUpdate: ({ editor }) => {
       const json = editor.getJSON();
@@ -31,7 +42,7 @@ const Tiptap = ({
   return (
     <div className="">
       <Toolbar editor={editor} />
-      <Editor editor={editor} />
+      <EditorContent editor={editor} />
     </div>
   );
 };

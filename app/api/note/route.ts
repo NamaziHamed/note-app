@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateText } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { prisma } from "@/lib/prisma";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { title, jsonText } = body;
-    const plainText = generateText(jsonText, [StarterKit]);
+    const plainText = generateText(jsonText, [StarterKit, TaskItem, TaskList]);
 
     const newNote = await prisma.note.create({
       data: {

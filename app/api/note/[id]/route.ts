@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import StarterKit from "@tiptap/starter-kit";
 import { generateText } from "@tiptap/core";
+import { TaskItem, TaskList } from "@tiptap/extension-list";
 
 export async function PUT(req: Request, context: { params: { id: string } }) {
   const session = await auth();
@@ -14,7 +15,7 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
 
   const body = await req.json();
   const { title, jsonText } = body;
-  const plainText = generateText(jsonText, [StarterKit]);
+  const plainText = generateText(jsonText, [StarterKit, TaskItem, TaskList]);
   try {
     const updatedNote = await prisma.note.update({
       data: { title, jsonText: JSON.stringify(jsonText), plainText },

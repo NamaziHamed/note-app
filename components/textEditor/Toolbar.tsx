@@ -2,19 +2,17 @@ import React from "react";
 import { Editor, useEditorState } from "@tiptap/react";
 import {
   BoldIcon,
-  Heading1Icon,
-  Heading2Icon,
-  Heading3Icon,
   ItalicIcon,
-  ListIcon,
-  ListOrderedIcon,
   Redo2Icon,
   StrikethroughIcon,
   UnderlineIcon,
   Undo2Icon,
 } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { Button } from "../ui/button";
+
+import { BubbleMenu } from "@tiptap/react/menus";
+import ToolbarButton from "./ToolbarButton";
+import ToolbarDropdownButton from "./ToolbarDropdownButton";
+import ColorSeterButtons from "./ColorSeterButtons";
 
 const Toolbar = ({ editor }: { editor: Editor }) => {
   const editorState = useEditorState({
@@ -30,6 +28,7 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
         isHeading3: ctx.editor.isActive("heading", { level: 3 }) ?? false,
         isBulletList: ctx.editor.isActive("bulletList") ?? false,
         isOrderedList: ctx.editor.isActive("orderedList") ?? false,
+        isTaskList: ctx.editor.isActive("taskList") ?? false,
         canUndo: ctx.editor.can().chain().undo().run() ?? false,
         canRedo: ctx.editor.can().chain().redo().run() ?? false,
       };
@@ -61,76 +60,31 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
       command: () => editor.chain().focus().toggleStrike().run(),
       isActive: editorState.isStrike,
     },
-    {
-      title: "Heading 1",
-      Icon: Heading1Icon,
-      command: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      isActive: editorState.isHeading1,
-    },
-    {
-      title: "Heading 2",
-      Icon: Heading2Icon,
-      command: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      isActive: editorState.isHeading2,
-    },
-    {
-      title: "Heading 3",
-      Icon: Heading3Icon,
-      command: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-      isActive: editorState.isHeading3,
-    },
-    {
-      title: "Ordered List",
-      Icon: ListOrderedIcon,
-      command: () => editor.chain().focus().toggleOrderedList().run(),
-      isActive: editorState.isOrderedList,
-    },
-    {
-      title: "Bullet list",
-      Icon: ListIcon,
-      command: () => editor.chain().focus().toggleBulletList().run(),
-      isActive: editorState.isBulletList,
-    },
-    {
-      title: "Undo",
-      Icon: Undo2Icon,
-      command: () => editor.chain().focus().undo().run(),
-      isActive: editorState.canUndo,
-    },
-    {
-      title: "Redo",
-      Icon: Redo2Icon,
-      command: () => editor.chain().focus().redo().run(),
-      isActive: editorState.canRedo,
-    },
   ];
 
   return (
-    <div
-      className="w-full bg-muted border-b border-t py-1 flex gap-0 sm:space-x-0 sm:gap-2 items-center justify-between sm:justify-start 
+    <BubbleMenu editor={editor}>
+      <div
+        className="w-fit bg-muted border border-zinc-300 px-2 py-1 flex gap-0 sm:space-x-0 
+        sm:gap-2 items-center justify-between sm:justify-start  rounded-md py-2
     "
-    >
-      {tools.map(({ title, Icon, command, isActive }) => (
-        <Tooltip key={title}>
-          <TooltipTrigger asChild>
-            <Button
-              size={"sm"}
-              variant={"ghost"}
-              onClick={command}
-              disabled={(title === "Redo" || title === "Undo") && !isActive}
-              className={`${
-                !(title === "Redo" || title === "Undo") && isActive
-                  ? "border border-primary text-primary"
-                  : "border-0 text-foreground"
-              } transition-all duration-300 cursor-pointer disabled:bg-gray-700`}
-            >
-              <Icon className="w-4 h-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{title}</TooltipContent>
-        </Tooltip>
-      ))}
-    </div>
+      >
+        {tools.map(({ title, Icon, command, isActive }) => (
+          <ToolbarButton
+            title={title}
+            command={command}
+            isActive={isActive}
+            key={title}
+          >
+            <Icon className="h-3 w-3" />
+          </ToolbarButton>
+        ))}
+        <div className="bg-white w-0.5 mx-1 h-6"></div>
+        <ColorSeterButtons editor={editor} editorState={editorState} />
+        <div className="bg-white w-0.5 mx-1 h-6"></div>
+        <ToolbarDropdownButton editor={editor} editorState={editorState} />
+      </div>
+    </BubbleMenu>
   );
 };
 
