@@ -26,6 +26,6 @@ export type EditorActiveState = {
   isAlignRight: boolean;
   isAlignCenter: boolean;
   isJustify: boolean;
-  canUndo: boolean;
-  canRedo: boolean;
+  currentBgColor: string;
+  currentTextColor: string;
 };

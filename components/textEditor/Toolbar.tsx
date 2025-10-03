@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Editor, useEditorState } from "@tiptap/react";
 import {
@@ -6,12 +7,10 @@ import {
   StrikethroughIcon,
   UnderlineIcon,
 } from "lucide-react";
-
 import { BubbleMenu } from "@tiptap/react/menus";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarDropdownButton from "./ToolbarDropdownButton";
 import ColorSeterButtons from "./ColorSeterButtons";
-import TextAlign from "@tiptap/extension-text-align";
 
 const Toolbar = ({ editor }: { editor: Editor }) => {
   const editorState = useEditorState({
@@ -29,12 +28,13 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
         isOrderedList: ctx.editor.isActive("orderedList") ?? false,
         isTaskList: ctx.editor.isActive("taskList") ?? false,
         isParagraph: ctx.editor.isActive("paragraph") ?? false,
-        isAlignLeft: ctx.editor.isActive({ TextAlign: "left" }) ?? false,
-        isAlignRight: ctx.editor.isActive({ TextAlign: "Right" }) ?? false,
-        isAlignCenter: ctx.editor.isActive({ TextAlign: "Center" }) ?? false,
-        isJustify: ctx.editor.isActive({ TextAlign: "justify" }) ?? false,
-        canUndo: ctx.editor.can().chain().undo().run() ?? false,
-        canRedo: ctx.editor.can().chain().redo().run() ?? false,
+        isAlignLeft: ctx.editor.isActive({ textAlign: "left" }) ?? false,
+        isAlignRight: ctx.editor.isActive({ textAlign: "right" }) ?? false,
+        isAlignCenter: ctx.editor.isActive({ textAlign: "center" }) ?? false,
+        isJustify: ctx.editor.isActive({ textAlign: "justify" }) ?? false,
+        currentBgColor:
+          ctx.editor.getAttributes("textStyle").backgroundColor ?? "",
+        currentTextColor: ctx.editor.getAttributes("textStyle").color ?? "",
       };
     },
   });

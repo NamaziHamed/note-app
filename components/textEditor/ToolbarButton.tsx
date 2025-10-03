@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 
 interface IToolbarButtonProps {
   title: string;
-  command: () => void;
+  command?: () => void;
   isActive: boolean;
   children: ReactNode;
 }

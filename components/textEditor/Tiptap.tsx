@@ -6,6 +6,11 @@ import { JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
+import {
+  TextStyle,
+  BackgroundColor,
+  Color,
+} from "@tiptap/extension-text-style";
 
 const Tiptap = ({
   initialValue,
@@ -15,10 +20,14 @@ const Tiptap = ({
   onChange: (json: JSONContent) => void;
 }) => {
   const [text] = useState(initialValue || null);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
+      TextStyle,
+      BackgroundColor,
       TaskList,
+      Color,
       TaskItem.configure({
         nested: true,
         HTMLAttributes: {
@@ -28,6 +37,7 @@ const Tiptap = ({
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content: text,
+    autofocus: true,
     editorProps: {
       attributes: { class: "bg-card rounded-b-xl min-h-[75vh]" },
     },

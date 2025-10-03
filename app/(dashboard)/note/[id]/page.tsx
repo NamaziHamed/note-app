@@ -51,27 +51,27 @@ const NotePage = () => {
   }, [params.id]);
 
   // Saving process controlled by hasChanged
-  useEffect(() => {
-    if (!hasChanged) return;
+  // useEffect(() => {
+  //   if (!hasChanged) return;
 
-    const saveNote = async () => {
-      const payload = { title, jsonText };
-      try {
-        if (id === "new") {
-          const res = await axios.post("/api/note", payload);
-          setNote({ id: res.data.id, title, jsonText });
-          toast.success("Note saved!");
-        } else {
-          await axios.put(`/api/note/${id}`, payload);
-        }
-      } catch (error) {
-        toast.error("Error saving progress.");
-      }
-    };
-
-    const timer = setTimeout(saveNote, 3000);
-    return () => clearTimeout(timer);
-  }, [title, jsonText, hasChanged]);
+  //   const saveNote = async () => {
+  //     const payload = { title, jsonText };
+  //     try {
+  //       if (id === "new") {
+  //         const res = await axios.post("/api/note", payload);
+  //         setNote({ id: res.data.id, title, jsonText });
+  //         toast.success("Note saved!");
+  //       } else {
+  //         await axios.put(`/api/note/${id}`, payload);
+  //       }
+  //     } catch (error) {
+  //       toast.error("Error saving progress.");
+  //     }
+  //   };
+  //
+  //   const timer = setTimeout(saveNote, 3000);
+  //   return () => clearTimeout(timer);
+  // }, [title, jsonText, hasChanged]);
 
   if (isLoading) {
     return (
