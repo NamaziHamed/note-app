@@ -21,6 +21,11 @@ export type EditorActiveState = {
   isBulletList: boolean;
   isOrderedList: boolean;
   isTaskList: boolean;
+  isParagraph: boolean;
+  isAlignLeft: boolean;
+  isAlignRight: boolean;
+  isAlignCenter: boolean;
+  isJustify: boolean;
   canUndo: boolean;
   canRedo: boolean;
 };

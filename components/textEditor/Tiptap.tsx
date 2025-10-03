@@ -4,7 +4,7 @@ import Toolbar from "./Toolbar";
 import { EditorContent } from "@tiptap/react";
 import { JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import BubbleMenu from "@tiptap/extension-bubble-menu";
+import TextAlign from "@tiptap/extension-text-align";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 
 const Tiptap = ({
@@ -25,6 +25,7 @@ const Tiptap = ({
           class: "checkList",
         },
       }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content: text,
     editorProps: {

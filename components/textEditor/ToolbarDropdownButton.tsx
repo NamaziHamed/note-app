@@ -4,6 +4,11 @@ import { Button } from "../ui/button";
 import { EditorActiveState } from "@/utils/types";
 import { Editor } from "@tiptap/react";
 import {
+  AlignCenterIcon,
+  AlignJustifyIcon,
+  AlignLeftIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
   Heading,
   Heading1Icon,
   Heading2Icon,
@@ -12,6 +17,7 @@ import {
   ListOrderedIcon,
   ListTodoIcon,
   LucideList,
+  PilcrowIcon,
 } from "lucide-react";
 
 const ToolbarDropdownButton = ({
@@ -21,15 +27,16 @@ const ToolbarDropdownButton = ({
   editorState: EditorActiveState;
   editor: Editor;
 }) => {
-  const [headingsOpen, setHeadingsOpen] = useState(false);
-  const [listsOpen, setlistsOpen] = useState(false);
+  const [isHeadingsOpen, setIsHeadingsOpen] = useState(false);
+  const [isListsOpen, setIsListsOpen] = useState(false);
+  const [isAlignOpen, setIsAlignOpen] = useState(false);
 
   const dropdownItems = [
     {
       title: "Heading",
       Icon: Heading,
-      isOpen: headingsOpen,
-      command: () => setHeadingsOpen(!headingsOpen),
+      isOpen: isHeadingsOpen,
+      command: () => setIsHeadingsOpen(!isHeadingsOpen),
       dropdowns: [
         {
           title: "Heading 1",
@@ -52,13 +59,19 @@ const ToolbarDropdownButton = ({
             editor.chain().focus().toggleHeading({ level: 3 }).run(),
           isActive: editorState.isHeading3,
         },
+        {
+          title: "Paragraph",
+          Icon: PilcrowIcon,
+          command: () => editor.chain().focus().setParagraph().run(),
+          isActive: editorState.isParagraph,
+        },
       ],
     },
     {
       title: "Lists",
       Icon: LucideList,
-      isOpen: listsOpen,
-      command: () => setlistsOpen(!listsOpen),
+      isOpen: isListsOpen,
+      command: () => setIsListsOpen(!isListsOpen),
       dropdowns: [
         {
           title: "Ordered List",
@@ -80,10 +93,42 @@ const ToolbarDropdownButton = ({
         },
       ],
     },
+    {
+      title: "Alignments",
+      Icon: AlignCenterIcon,
+      isOpen: isAlignOpen,
+      command: () => setIsAlignOpen(!isAlignOpen),
+      dropdowns: [
+        {
+          title: "Justify Left",
+          Icon: AlignLeftIcon,
+          command: () => editor.chain().focus().setTextAlign("left").run(),
+          isActive: editorState.isAlignLeft,
+        },
+        {
+          title: "Bullet list",
+          Icon: ListIcon,
+          command: () => editor.chain().focus().setTextAlign("right").run(),
+          isActive: editorState.isAlignRight,
+        },
+        {
+          title: "Check list",
+          Icon: ListTodoIcon,
+          command: () => editor.chain().focus().setTextAlign("center").run(),
+          isActive: editorState.isAlignCenter,
+        },
+        {
+          title: "Justify",
+          Icon: AlignJustifyIcon,
+          command: () => editor.chain().focus().setTextAlign("justify").run(),
+          isActive: editorState.isJustify,
+        },
+      ],
+    },
   ];
 
   return (
-    <>
+    <div className="space-x-0.5 flex items-center">
       {dropdownItems.map((item) => (
         <div key={item.title} className="relative">
           <Button
@@ -93,13 +138,20 @@ const ToolbarDropdownButton = ({
             className="relative"
           >
             <item.Icon />
-            <span>{item.title}</span>
+            {item.title === "Heading" &&
+              (isHeadingsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />)}
+
+            {item.title === "Lists" &&
+              (isListsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />)}
+
+            {item.title === "Alignments" &&
+              (isAlignOpen ? <ChevronUpIcon /> : <ChevronDownIcon />)}
           </Button>
 
           {item.isOpen && (
             <div
               className="absolute left-0 translate-y-0.5 top-full bg-muted border rounded-md
-            flex flex-col z-50"
+            flex flex-col z-50 justify-start"
             >
               {item.dropdowns.map((subItem) => (
                 <Button
@@ -107,6 +159,7 @@ const ToolbarDropdownButton = ({
                   size={"sm"}
                   key={subItem.title}
                   onClick={subItem.command}
+                  className="justify-start"
                 >
                   <subItem.Icon />
                   <span>{subItem.title}</span>
@@ -114,18 +167,19 @@ const ToolbarDropdownButton = ({
               ))}
             </div>
           )}
-          {(headingsOpen || listsOpen) && (
+          {(isHeadingsOpen || isListsOpen || isAlignOpen) && (
             <div
               className="fixed inset-0 top-0 min-w-screen max-w-screen z-30"
               onClick={() => {
-                setlistsOpen(false);
-                setHeadingsOpen(false);
+                setIsListsOpen(false);
+                setIsHeadingsOpen(false);
+                setIsAlignOpen(false);
               }}
             ></div>
           )}
         </div>
       ))}
-    </>
+    </div>
   );
 };
 

@@ -3,16 +3,15 @@ import { Editor, useEditorState } from "@tiptap/react";
 import {
   BoldIcon,
   ItalicIcon,
-  Redo2Icon,
   StrikethroughIcon,
   UnderlineIcon,
-  Undo2Icon,
 } from "lucide-react";
 
 import { BubbleMenu } from "@tiptap/react/menus";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarDropdownButton from "./ToolbarDropdownButton";
 import ColorSeterButtons from "./ColorSeterButtons";
+import TextAlign from "@tiptap/extension-text-align";
 
 const Toolbar = ({ editor }: { editor: Editor }) => {
   const editorState = useEditorState({
@@ -29,6 +28,11 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
         isBulletList: ctx.editor.isActive("bulletList") ?? false,
         isOrderedList: ctx.editor.isActive("orderedList") ?? false,
         isTaskList: ctx.editor.isActive("taskList") ?? false,
+        isParagraph: ctx.editor.isActive("paragraph") ?? false,
+        isAlignLeft: ctx.editor.isActive({ TextAlign: "left" }) ?? false,
+        isAlignRight: ctx.editor.isActive({ TextAlign: "Right" }) ?? false,
+        isAlignCenter: ctx.editor.isActive({ TextAlign: "Center" }) ?? false,
+        isJustify: ctx.editor.isActive({ TextAlign: "justify" }) ?? false,
         canUndo: ctx.editor.can().chain().undo().run() ?? false,
         canRedo: ctx.editor.can().chain().redo().run() ?? false,
       };
@@ -65,8 +69,8 @@ const Toolbar = ({ editor }: { editor: Editor }) => {
   return (
     <BubbleMenu editor={editor}>
       <div
-        className="w-fit bg-muted border border-zinc-300 px-2 py-1 flex gap-0 sm:space-x-0 
-        sm:gap-2 items-center justify-between sm:justify-start  rounded-md py-2
+        className="w-fit bg-muted border border-zinc-300 px-2 py-1 flex
+        items-center justify-between sm:justify-start  rounded-md
     "
       >
         {tools.map(({ title, Icon, command, isActive }) => (
