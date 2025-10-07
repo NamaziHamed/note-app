@@ -1,14 +1,14 @@
 "use client";
-import React, { useState } from "react";
-import { Button } from "../ui/button";
+import React, { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
 import { EditorActiveState } from "@/utils/types";
 import { Editor } from "@tiptap/react";
 import {
   AlignCenterIcon,
   AlignJustifyIcon,
   AlignLeftIcon,
+  AlignRightIcon,
   ChevronDownIcon,
-  ChevronUpIcon,
   Heading,
   Heading1Icon,
   Heading2Icon,
@@ -27,36 +27,52 @@ const ToolbarDropdownButton = ({
   editorState: EditorActiveState;
   editor: Editor;
 }) => {
-  const [isHeadingsOpen, setIsHeadingsOpen] = useState(false);
-  const [isListsOpen, setIsListsOpen] = useState(false);
-  const [isAlignOpen, setIsAlignOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleMenuToggle = (title: string) => {
+    setOpenMenu((current) => (current === title ? null : title));
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setOpenMenu(null);
+      }
+    };
+
+    if (openMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openMenu]);
 
   const dropdownItems = [
     {
       title: "Heading",
       Icon: Heading,
-      isOpen: isHeadingsOpen,
-      command: () => setIsHeadingsOpen(!isHeadingsOpen),
+      isOpen: openMenu === "Heading",
+      command: () => handleMenuToggle("Heading"),
       dropdowns: [
         {
           title: "Heading 1",
           Icon: Heading1Icon,
-          command: () =>
-            editor.chain().focus().toggleHeading({ level: 1 }).run(),
+          command: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
           isActive: editorState.isHeading1,
         },
         {
           title: "Heading 2",
           Icon: Heading2Icon,
-          command: () =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run(),
+          command: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
           isActive: editorState.isHeading2,
         },
         {
           title: "Heading 3",
           Icon: Heading3Icon,
-          command: () =>
-            editor.chain().focus().toggleHeading({ level: 3 }).run(),
+          command: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
           isActive: editorState.isHeading3,
         },
         {
@@ -70,8 +86,8 @@ const ToolbarDropdownButton = ({
     {
       title: "Lists",
       Icon: LucideList,
-      isOpen: isListsOpen,
-      command: () => setIsListsOpen(!isListsOpen),
+      isOpen: openMenu === "Lists",
+      command: () => handleMenuToggle("Lists"),
       dropdowns: [
         {
           title: "Ordered List",
@@ -96,8 +112,8 @@ const ToolbarDropdownButton = ({
     {
       title: "Alignments",
       Icon: AlignCenterIcon,
-      isOpen: isAlignOpen,
-      command: () => setIsAlignOpen(!isAlignOpen),
+      isOpen: openMenu === "Alignments",
+      command: () => handleMenuToggle("Alignments"),
       dropdowns: [
         {
           title: "Justify Left",
@@ -106,14 +122,14 @@ const ToolbarDropdownButton = ({
           isActive: editorState.isAlignLeft,
         },
         {
-          title: "Bullet list",
-          Icon: ListIcon,
+          title: "Align Right",
+          Icon: AlignRightIcon,
           command: () => editor.chain().focus().setTextAlign("right").run(),
           isActive: editorState.isAlignRight,
         },
         {
-          title: "Check list",
-          Icon: ListTodoIcon,
+          title: "Align Center",
+          Icon: AlignCenterIcon,
           command: () => editor.chain().focus().setTextAlign("center").run(),
           isActive: editorState.isAlignCenter,
         },
@@ -127,57 +143,45 @@ const ToolbarDropdownButton = ({
     },
   ];
 
-
-
   return (
-    <div className="space-x-0.5 flex items-center">
+    <div className="space-x-0.5 flex items-center" ref={dropdownRef}>
       {dropdownItems.map((item) => (
         <div key={item.title} className="relative">
           <Button
-            variant={"outline"}
+            variant={"ghost"}
             size={"sm"}
             onClick={item.command}
-            className="relative"
+            className="flex items-center gap-1"
           >
-            <item.Icon />
-            {item.title === "Heading" &&
-              (isHeadingsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />)}
-
-            {item.title === "Lists" &&
-              (isListsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />)}
-
-            {item.title === "Alignments" &&
-              (isAlignOpen ? <ChevronUpIcon /> : <ChevronDownIcon />)}
+            <item.Icon className="w-4 h-4" />
+            <ChevronDownIcon
+              className={`w-3 h-3 transition-transform ${
+                item.isOpen ? "rotate-180" : ""
+              }`}
+            />
           </Button>
 
           {item.isOpen && (
             <div
-              className="absolute left-0 translate-y-0.5 top-full bg-muted border rounded-md
-            flex flex-col z-50 justify-start"
+              className="absolute right-0 mt-1 top-full bg-muted border rounded-md
+             flex flex-col z-50 justify-start shadow-lg"
             >
               {item.dropdowns.map((subItem) => (
                 <Button
-                  variant={"outline"}
+                  variant={subItem.isActive ? "secondary" : "ghost"}
                   size={"sm"}
                   key={subItem.title}
-                  onClick={subItem.command}
-                  className="justify-start"
+                  onClick={() => {
+                    subItem.command();
+                    setOpenMenu(null); // Close menu after selection
+                  }}
+                  className="justify-start gap-2 px-2"
                 >
-                  <subItem.Icon />
+                  <subItem.Icon className="w-4 h-4" />
                   <span>{subItem.title}</span>
                 </Button>
               ))}
             </div>
-          )}
-          {(isHeadingsOpen || isListsOpen || isAlignOpen) && (
-            <div
-              className="fixed inset-0 top-0 min-w-screen max-w-screen z-30"
-              onClick={() => {
-                setIsListsOpen(false);
-                setIsHeadingsOpen(false);
-                setIsAlignOpen(false);
-              }}
-            ></div>
           )}
         </div>
       ))}
@@ -186,3 +190,4 @@ const ToolbarDropdownButton = ({
 };
 
 export default ToolbarDropdownButton;
+

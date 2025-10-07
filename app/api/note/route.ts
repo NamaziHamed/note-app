@@ -4,6 +4,12 @@ import { generateText } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { prisma } from "@/lib/prisma";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
+import {
+  BackgroundColor,
+  Color,
+  TextStyle,
+} from "@tiptap/extension-text-style";
+import TextAlign from "@tiptap/extension-text-align";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -15,7 +21,15 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { title, jsonText } = body;
-    const plainText = generateText(jsonText, [StarterKit, TaskItem, TaskList]);
+    const plainText = generateText(jsonText, [
+      StarterKit,
+      TextStyle,
+      BackgroundColor,
+      TaskList,
+      Color,
+      TaskItem,
+      TextAlign,
+    ]);
 
     const newNote = await prisma.note.create({
       data: {

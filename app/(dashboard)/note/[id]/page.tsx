@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Tiptap from "@/components/textEditor/Tiptap";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,7 @@ import { JSONContent } from "@tiptap/react";
 import axios from "axios";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useNoteStore } from "@/store/useNoteStore";
 import { NoteData } from "@/utils/types";
 
@@ -20,21 +20,26 @@ const NotePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasChanged, setHasChanged] = useState(false);
 
-  // Loading initial note data or clearning it
+  const noteStateRef = useRef({ id, title, jsonText, hasChanged });
+
   useEffect(() => {
-    const id = params.id as string;
+    noteStateRef.current = { id, title, jsonText, hasChanged };
+  }, [id, title, jsonText, hasChanged]);
+
+  useEffect(() => {
+    const noteId = params.id as string;
     setIsLoading(true);
 
     const loadNote = async () => {
-      if (id === "new") {
+      if (noteId === "new") {
         clearNote();
       } else {
         try {
-          const res = await axios.get<NoteData>(`/api/note/${id}`);
+          const res = await axios.get<NoteData>(`/api/note/${noteId}`);
           if (res.status === 200) {
             const note = res.data;
             setNote({
-              id: id,
+              id: noteId,
               title: note.title || "",
               jsonText: JSON.parse(note.jsonText || "{}"),
             });
@@ -48,30 +53,34 @@ const NotePage = () => {
     };
 
     loadNote();
-  }, [params.id]);
+  }, [params.id, setNote, clearNote]);
 
-  // Saving process controlled by hasChanged
-  // useEffect(() => {
-  //   if (!hasChanged) return;
+  useEffect(() => {
+    const saveOnExit = () => {
+      const lastState = noteStateRef.current;
+      console.log(lastState.id);
 
-  //   const saveNote = async () => {
-  //     const payload = { title, jsonText };
-  //     try {
-  //       if (id === "new") {
-  //         const res = await axios.post("/api/note", payload);
-  //         setNote({ id: res.data.id, title, jsonText });
-  //         toast.success("Note saved!");
-  //       } else {
-  //         await axios.put(`/api/note/${id}`, payload);
-  //       }
-  //     } catch (error) {
-  //       toast.error("Error saving progress.");
-  //     }
-  //   };
-  //
-  //   const timer = setTimeout(saveNote, 3000);
-  //   return () => clearTimeout(timer);
-  // }, [title, jsonText, hasChanged]);
+      if (lastState.hasChanged) {
+        const data = { title: lastState.title, jsonText: lastState.jsonText };
+        const blob = new Blob([JSON.stringify(data)], {
+          type: "application/json",
+        });
+
+        if (id === "new") {
+          navigator.sendBeacon("/api/note/", blob);
+        } else {
+          navigator.sendBeacon(`/api/note/${id}`, blob);
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", saveOnExit);
+
+    return () => {
+      window.removeEventListener("beforeunload", saveOnExit);
+      saveOnExit();
+    };
+  }, []);
 
   if (isLoading) {
     return (
@@ -84,7 +93,7 @@ const NotePage = () => {
 
   return (
     <div className="pt-24 relative">
-      <div className="h-24 w-full absolute top-0 left-0 py-6 px-3">
+      <div className="h-24 w-full fixed top-0 left-0 py-6 px-3 bg-zinc-900 z-10">
         <Button variant={"outline"} asChild>
           <Link href={"/dashboard"} className="flex gap-2 items-center">
             <ArrowBigLeft />
@@ -93,7 +102,7 @@ const NotePage = () => {
         </Button>
       </div>
       <Input
-        className="py-8 text-2xl md:text-3xl lg:text-4xl font-bold"
+        className="py-8 text-2xl md:text-3xl lg:text-4xl font-bold bg-muted border-none"
         placeholder="Untitled"
         value={title}
         onChange={(e) => {
@@ -102,7 +111,7 @@ const NotePage = () => {
         }}
       />
       <Tiptap
-        key={id}
+        key={id || "new"}
         initialValue={jsonText}
         onChange={(newContent: JSONContent) => {
           setJsonText(newContent);
