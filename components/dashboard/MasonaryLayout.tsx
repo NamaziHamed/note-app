@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Masonry from "react-masonry-css";
 import axios from "axios";
 import {
@@ -14,10 +14,14 @@ import { NoteData } from "@/utils/types";
 import { DateTime } from "luxon";
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
 
-const MasonaryLayout = () => {
-  const [data, setData] = useState<NoteData[]>([]);
+const MasonaryLayout = ({
+  data,
+  onRemove,
+}: {
+  data: NoteData[];
+  onRemove: (id: string) => void;
+}) => {
   const breakpointColumnsObj = {
     default: 4,
     1100: 3,
@@ -35,34 +39,6 @@ const MasonaryLayout = () => {
     return ISODate.toFormat("dd LLL yyyy");
   };
 
-  const handleRemove = async (id: string) => {
-    try {
-      const res = await axios.delete(`/api/note/${id}`);
-      if (res.status === 200) {
-        setData((notes) => notes.filter((note) => note.id !== id));
-        toast.success("Note deleted successfully");
-      } else {
-        toast.error("Something went wrong! please try again!");
-      }
-    } catch (error) {
-      console.error("Delete failed", error);
-      toast.error("Failed to delete note! please try again!");
-    }
-  };
-
-  useEffect(() => {
-    const fetchUserNotes = async () => {
-      try {
-        const res = await axios.get("/api/note");
-        if (res.status === 200) return setData(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchUserNotes();
-  }, []);
-
   return (
     <Masonry
       breakpointCols={breakpointColumnsObj}
@@ -75,7 +51,7 @@ const MasonaryLayout = () => {
             className="absolute top-0 right-0 "
             onClick={(e) => {
               e.stopPropagation();
-              handleRemove(note.id);
+              onRemove(note.id);
             }}
           >
             <Trash2 className="w-4 h-4 text-red-500 hidden group-hover:block" />
