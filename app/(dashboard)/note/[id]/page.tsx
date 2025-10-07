@@ -8,40 +8,41 @@ import { JSONContent } from "@tiptap/react";
 import axios from "axios";
 import Link from "next/link";
 import { toast } from "sonner";
-import { useParams, useRouter } from "next/navigation";
-import { useNoteStore } from "@/store/useNoteStore";
+import { useParams } from "next/navigation";
 import { NoteData } from "@/utils/types";
 
 const NotePage = () => {
-  const { id, title, jsonText, setNote, setTitle, setJsonText, clearNote } =
-    useNoteStore();
-
-  const params = useParams();
+  const initialData = {
+    id: "new",
+    title: "",
+    jsonText: {},
+    hasChanged: false,
+  };
+  const [noteData, setNoteData] = useState(initialData);
   const [isLoading, setIsLoading] = useState(true);
-  const [hasChanged, setHasChanged] = useState(false);
+  const params = useParams();
 
-  const noteStateRef = useRef({ id, title, jsonText, hasChanged });
+  const noteStateRef = useRef(noteData);
 
   useEffect(() => {
-    noteStateRef.current = { id, title, jsonText, hasChanged };
-  }, [id, title, jsonText, hasChanged]);
+    noteStateRef.current = noteData;
+  }, [noteData]);
 
   useEffect(() => {
     const noteId = params.id as string;
     setIsLoading(true);
 
     const loadNote = async () => {
-      if (noteId === "new") {
-        clearNote();
-      } else {
+      if (noteId !== "new") {
         try {
           const res = await axios.get<NoteData>(`/api/note/${noteId}`);
           if (res.status === 200) {
             const note = res.data;
-            setNote({
+            setNoteData({
               id: noteId,
               title: note.title || "",
               jsonText: JSON.parse(note.jsonText || "{}"),
+              hasChanged: false,
             });
           }
         } catch (error) {
@@ -49,16 +50,14 @@ const NotePage = () => {
         }
       }
       setIsLoading(false);
-      setHasChanged(false);
     };
 
     loadNote();
-  }, [params.id, setNote, clearNote]);
+  }, [params.id]);
 
   useEffect(() => {
     const saveOnExit = () => {
       const lastState = noteStateRef.current;
-      console.log(lastState.id);
 
       if (lastState.hasChanged) {
         const data = { title: lastState.title, jsonText: lastState.jsonText };
@@ -66,10 +65,10 @@ const NotePage = () => {
           type: "application/json",
         });
 
-        if (id === "new") {
+        if (lastState.id === "new") {
           navigator.sendBeacon("/api/note/", blob);
         } else {
-          navigator.sendBeacon(`/api/note/${id}`, blob);
+          navigator.sendBeacon(`/api/note/${lastState.id}`, blob);
         }
       }
     };
@@ -104,18 +103,17 @@ const NotePage = () => {
       <Input
         className="py-8 text-2xl md:text-3xl lg:text-4xl font-bold bg-muted border-none"
         placeholder="Untitled"
-        value={title}
+        value={noteData.title}
         onChange={(e) => {
-          setTitle(e.target.value);
-          setHasChanged(true);
+          setNoteData({ ...noteData, title: e.target.value, hasChanged: true });
         }}
       />
+
       <Tiptap
-        key={id || "new"}
-        initialValue={jsonText}
+        key={noteData.id}
+        initialValue={noteData.jsonText}
         onChange={(newContent: JSONContent) => {
-          setJsonText(newContent);
-          setHasChanged(true);
+          setNoteData({ ...noteData, jsonText: newContent, hasChanged: true });
         }}
       />
     </div>
