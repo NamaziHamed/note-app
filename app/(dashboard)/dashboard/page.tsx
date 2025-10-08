@@ -52,7 +52,8 @@ const page = () => {
     try {
       const res = await axios.delete(`/api/note/${id}`);
       if (res.status === 200) {
-        setData((notes) => notes.filter((note) => note.id !== id));
+        setData(data.filter((note) => note.id != id));
+        setFiltered(filtered.filter((note) => note.id !== id));
         toast.success("Note deleted successfully");
       } else {
         toast.error("Something went wrong! please try again!");
