@@ -10,6 +10,7 @@ import {
   TextStyle,
 } from "@tiptap/extension-text-style";
 import TextAlign from "@tiptap/extension-text-align";
+import { z } from "zod";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -21,15 +22,21 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { title, jsonText } = body;
-    const plainText = generateText(jsonText, [
-      StarterKit,
-      TextStyle,
-      BackgroundColor,
-      TaskList,
-      Color,
-      TaskItem,
-      TextAlign,
-    ]);
+    const plainText = "";
+
+    try {
+      generateText(jsonText, [
+        StarterKit,
+        TextStyle,
+        BackgroundColor,
+        TaskList,
+        Color,
+        TaskItem,
+        TextAlign,
+      ]);
+    } catch (error) {
+      ("");
+    }
 
     const newNote = await prisma.note.create({
       data: {
