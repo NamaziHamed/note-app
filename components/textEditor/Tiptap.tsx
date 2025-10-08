@@ -39,7 +39,7 @@ const Tiptap = ({
     content: text,
     autofocus: true,
     editorProps: {
-      attributes: { class: "bg-card rounded-b-xl min-h-[75vh]" },
+      attributes: { class: "bg-card rounded-b-xl min-h-[83vh]" },
     },
     onUpdate: ({ editor }) => {
       const json = editor.getJSON();

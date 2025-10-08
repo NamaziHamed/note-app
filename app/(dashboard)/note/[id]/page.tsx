@@ -92,7 +92,10 @@ const NotePage = () => {
 
   return (
     <div className="pt-24 relative">
-      <div className="h-24 w-full fixed top-0 left-0 py-6 px-3 bg-zinc-900 z-10">
+      <div
+        className="h-24 w-full fixed top-0 left-0 py-6 px-3 bg-zinc-950 z-10
+      border-b border-white"
+      >
         <Button variant={"outline"} asChild>
           <Link href={"/dashboard"} className="flex gap-2 items-center">
             <ArrowBigLeft />
@@ -101,7 +104,7 @@ const NotePage = () => {
         </Button>
       </div>
       <Input
-        className="py-8 text-2xl md:text-3xl lg:text-4xl font-bold bg-muted border-none"
+        className="py-9 text-2xl md:text-3xl lg:text-4xl font-bold border-b"
         placeholder="Untitled"
         value={noteData.title}
         onChange={(e) => {

@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import Masonry from "react-masonry-css";
-import axios from "axios";
 import {
   Card,
   CardContent,
@@ -72,7 +71,7 @@ const MasonaryLayout = ({
               )}
               {note.plainText
                 ?.split("\n")
-                .slice(0, 15)
+                .slice(0, 40)
                 .map((line, index) => (
                   <p
                     key={index}
