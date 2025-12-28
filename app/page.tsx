@@ -7,7 +7,6 @@ import {
   LucideToolCase,
   SearchCheckIcon,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 const features = [
@@ -47,7 +46,9 @@ export default function Home() {
           className="
           flex items-center justify-center flex-col text-white z-40 space-y-5"
         >
-          <h2 className="font-bold text-pretty text-primary text-4xl md:text-5xl lg:text-6xl">
+          <h2 className="font-bold text-pretty text-primary text-4xl md:text-5xl lg:text-6xl xl:text-7xl
+            animate-in slide-in-from-top-80 duration-500 fade-in-0
+          ">
             Your second brain is here!
           </h2>
           <p>Write down your thoughts, get them out of your head!</p>
@@ -55,7 +56,7 @@ export default function Home() {
             asChild
             size={"lg"}
             className="group hover:-translate-y-0.5 
-              animate-in slide-in-from-bottom-80 duration-300 fade-in-0
+              animate-in slide-in-from-bottom-80 duration-500 fade-in-0
               scale-110 transition-all "
           >
             <Link href={"/register"}>

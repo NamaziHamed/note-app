@@ -10,7 +10,7 @@ import { NoteData } from "@/utils/types";
 import axios from "axios";
 import { toast } from "sonner";
 
-const page = () => {
+const DashboardPage = () => {
   const { data: session, status } = useSession();
   const [data, setData] = useState<NoteData[]>([]);
   const [filtered, setFiltered] = useState(data);
@@ -88,4 +88,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default DashboardPage;

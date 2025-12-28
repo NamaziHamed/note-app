@@ -47,6 +47,7 @@ const NotePage = () => {
           }
         } catch (error) {
           toast.error("Failed to load note.");
+          console.error(error);
         }
       }
       setIsLoading(false);

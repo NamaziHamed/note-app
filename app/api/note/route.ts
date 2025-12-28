@@ -10,7 +10,7 @@ import {
   TextStyle,
 } from "@tiptap/extension-text-style";
 import TextAlign from "@tiptap/extension-text-align";
-import { z } from "zod";
+import { toast } from "sonner";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
         TextAlign,
       ]);
     } catch (error) {
-      ("");
+      toast.error("Failed to generate plain text from note content.");
+      console.error("Error generating plain text:", error);
     }
 
     const newNote = await prisma.note.create({
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId)

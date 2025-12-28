@@ -20,7 +20,7 @@ export const registerSchema = z
   })
   .refine(
     (data) => {
-      data.password === data.confirm;
+      return data.password === data.confirm;
     },
     {
       message: "Passwords do not match",

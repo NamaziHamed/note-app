@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { loginProps, loginSchema } from "@/utils/authValidations";
-import { register } from "@/utils/authActions";
+import { registerWithCredentials as register } from "@/utils/authActions";
 
 const LoginForm = () => {
   const router = useRouter();

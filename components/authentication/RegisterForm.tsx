@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerProps, registerSchema } from "@/utils/authValidations";
-import { register } from "@/utils/authActions";
+import { registerWithCredentials as register } from "@/utils/authActions";
 import {
   Form,
   FormControl,

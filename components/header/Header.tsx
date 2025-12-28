@@ -16,7 +16,7 @@ const Header = () => {
         </Link>
       </div>
       <div className="space-x-2">
-        <Button asChild size={"sm"} variant={"outline"}>
+        <Button asChild size={"sm"} variant={"default"}>
           <Link href={"/login"}>
             <LogInIcon /> Login
           </Link>

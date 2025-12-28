@@ -11,7 +11,10 @@ import {
 } from "@tiptap/extension-text-style";
 import TextAlign from "@tiptap/extension-text-align";
 
-export async function POST(req: Request, context: { params: { id: string } }) {
+export async function POST(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId)
@@ -46,7 +49,10 @@ export async function POST(req: Request, context: { params: { id: string } }) {
   }
 }
 
-export async function PUT(req: Request, context: { params: { id: string } }) {
+export async function PUT(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   const userId = session?.user?.id;
   if (!userId)
@@ -80,7 +86,10 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
   }
 }
 
-export async function GET(req: Request, context: { params: { id: string } }) {
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ id: string }> }
+) {
   const session = await auth();
   const userId = session?.user?.id;
   const { id } = await context.params;
@@ -107,7 +116,7 @@ export async function GET(req: Request, context: { params: { id: string } }) {
 
 export async function DELETE(
   req: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
   const userId = session?.user?.id;

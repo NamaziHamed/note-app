@@ -1,6 +1,6 @@
 "use client";
 import { debounce } from "lodash";
-import React, { useCallback } from "react";
+import React from "react";
 import { Editor } from "@tiptap/react";
 import { HexColorPicker } from "react-colorful";
 import { HighlighterIcon, PaletteIcon } from "lucide-react";
@@ -29,14 +29,14 @@ const ColorSeterButtons = ({ editor, editorState }: ColorToolProps) => {
     },
   ];
 
-  const handleColorChange = useCallback(
-    debounce((type: string, color: string) => {
-      type === "bg"
-        ? editor.chain().focus().setBackgroundColor(color).run()
-        : editor.chain().focus().setColor(color).run();
-    }, 300),
-    [editor]
-  );
+  const handleColorChange = debounce((type: string, color: string) => {
+    if (type === "bg") {
+      editor.chain().focus().setBackgroundColor(color).run();
+    } else {
+      editor.chain().focus().setColor(color).run();
+    }
+  }, 300);
+
   return (
     <div>
       {colorTools.map((item) => (
